@@ -26,7 +26,7 @@ public class Portal {
         this.portalWorld = portalWorld;
         this.targetWorld = targetWorld;
         this.startLocation = portalBlocks[0][0].getLocation();
-        System.out.println(portalBlocks[3][4]);
+//        System.out.println(portalBlocks[3][4]);
         this.endLocation = portalBlocks[3][4].getLocation();
         this.portalBlocks = portalBlocks;
 
@@ -44,7 +44,7 @@ public class Portal {
         };
 
         boolean northSouth = portalBlocks[0][0].getX() == portalBlocks[0][1].getX();
-        System.out.println((byte) (northSouth ? 1 : 0));
+//        System.out.println((byte) (northSouth ? 1 : 0));
 
         // Create 'portal' within portal
         for (Block teleportBlock : innerPortalBlocks) {
@@ -54,7 +54,7 @@ public class Portal {
     }
 
     public void teleportPlayer(Player player) {
-        System.out.println("Teleporting " + player.getName() + " to " + portalBlocks[1][2].getLocation());
+//        System.out.println("Teleporting " + player.getName() + " to " + portalBlocks[1][2].getLocation());
         player.teleport(portalBlocks[1][2].getLocation(), TeleportCause.PLUGIN);
     }
 
