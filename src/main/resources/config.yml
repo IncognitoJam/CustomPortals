@@ -1,0 +1,11 @@
+portal-search-range: 64
+portal-creation-range: 24
+override-nether: false
+
+portal-materials:
+    world: "1:0"
+    world_nether: "49:0"
+
+world-scale:
+    world: 1.0
+    world_nether: 8.0
