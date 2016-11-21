@@ -78,8 +78,7 @@ destinationCoords = universeCoords * destinationWorldScale
 Please [contact me](mail_to:cameron.jamco@gmail.com) if you identify any bugs or make a issue thread here on GitHub.
 
 ## Releases
-~~Compiled JARs for this plugin can be found on the [Spigot resources]() site.~~
-Builds will be released soon for 1.10 and 1.11.
+Releases can be found here on [GitHub](https://github.com/IncognitoJam/CustomPortals/tree/master/releases).
 
 ## Credits
 This plugin was developed by IncognitoJam at the request of [Robotnik](https://www.spigotmc.org/members/robotnik.9977/) on the SpigotMC forums.
