@@ -9,8 +9,12 @@ Below each configuration option is explained in detail.
 
 `portal-creation-range: 24` The radius in which the plugin should search for an empty space to create a portal at the destination. If no space is found in this range then no portal is created and the teleport is cancelled. *This value should always be written as an integer and not as a decimal.*
 
-**Warning:** This option has undefined affects. Please keep this value set to `true`.
-`override-nether: true` Forces the plugin to override nether portals (does not work correctly as of now). *This value should always be written as an integer and not as a decimal.*
+~~**Warning:** This option has undefined affects. Please keep this value set to `true`.
+`override-nether: true` Forces the plugin to override nether portals (does not work correctly as of now). *This value should always be written as an integer and not as a decimal.*~~
+Configuration option removed in version `1.0.2`.
+
+#### Miscellaneous
+`debug-mode: false` Enables extra debugging in the console. If something doesn't seem right in the plugin, please enable debug mode, perform the action and report the full console log to a developer.
 
 #### Portal materials
 
@@ -54,31 +58,40 @@ When teleporting from `world_nether` to `arcade`, the x and y coordinates will b
 
 ######Pseudo-code:
 ```
-sourceWorld = "world_nether"
-sourceWorldScale = 8.0
-sourceCoords = (100, 64, 100)
+sourceWorld = "world_nether";
+sourceWorldScale = 8.0;
+sourceCoords = (100, 64, 100);
 
-destinationWorld = "arcade"
-destinationWorldScale = 2.0
+destinationWorld = "arcade";
+destinationWorldScale = 2.0;
 
-universeCoords = sourceCoords / sourceWorldScale
-    = (100/8, 64, 100/8)
+universeCoords = sourceCoords / sourceWorldScale;
+               = (100/8, 64, 100/8)
 
-destinationCoords = universeCoords * destinationWorldScale
-    = (100/8 * 2, 64, 100/8 * 2)
-    = (25, 64, 25)
+destinationCoords = universeCoords * destinationWorldScale;
+                  = (100/8 * 2, 64, 100/8 * 2)
+                  = (25, 64, 25)
 ```
 
 ## Bugs
 * There are currently some issues with the creation of portals, including:
-    * Portals spawning on trees
-    * Portals spawning above the world roof (nether)
-    * Portals not being detected and more being created.
+    * Portals spawning on trees (low priority)
+    * Portals spawning above the world roof in the nether (medium priority)
+    * Portals not being detected and more being created (high priority)
 
 Please [contact me](mail_to:cameron.jamco@gmail.com) if you identify any bugs or make a issue thread here on GitHub.
 
+## Planned Features
+* Re-write entire configuration, with per-world options aligned under a single value.
+* Multiple materials per portal (allowing for more complicated designs).
+* Portal costs and permissions.
+* Custom portal dimensions (beyond 4x5).
+* Toggleable y-axis inclusion in 'distances' - different portals for different y-coordinates.
+
 ## Releases
-Releases can be found here on [GitHub](https://github.com/IncognitoJam/CustomPortals/tree/master/releases).
+Releases can be found [here on GitHub](https://github.com/IncognitoJam/CustomPortals/tree/master/releases). See commits for change logs (until I decide to be more professional!)
+
+#####Latest Version: `1.0.2`
 
 ## Credits
 This plugin was developed by IncognitoJam at the request of [Robotnik](https://www.spigotmc.org/members/robotnik.9977/) on the SpigotMC forums.

@@ -27,9 +27,10 @@ import java.util.Set;
 
 public final class CustomPortals extends JavaPlugin implements Listener {
 
+    public static boolean DEBUG_MODE = true;
+
     // TODO implement non-flint and steel activation
 //    public static boolean PORTALS_REQUIRE_ACTIVATION = true;
-    public static boolean PORTALS_OVERRIDE_NETHER = false;
 
     private HashMap<String, ArrayList<Portal>> worldPortals = new HashMap<>();
     private HashMap<String, MaterialData> portalMaterials = new HashMap<>();
@@ -67,7 +68,8 @@ public final class CustomPortals extends JavaPlugin implements Listener {
         Portal.PORTAL_MAX_DISTANCE_SQUARED = Portal.PORTAL_MAX_DISTANCE * Portal.PORTAL_MAX_DISTANCE;
         Portal.PORTAL_CREATION_RANGE = config.getInt("portal-creation-range", 24);
 //        PORTALS_REQUIRE_ACTIVATION = config.getBoolean("require-activation", true);
-        PORTALS_OVERRIDE_NETHER = config.getBoolean("override-nether", false);
+        DEBUG_MODE = config.getBoolean("debug-mode", false);
+        log("Debug mode enabled.");
     }
 
     @Override
@@ -96,47 +98,34 @@ public final class CustomPortals extends JavaPlugin implements Listener {
                 Location startLocation = parseLocation(portalWorld, startLocationString);
                 Location endLocation = parseLocation(portalWorld, endLocationString);
 
-                boolean equalX = startLocation.getBlockZ() == endLocation.getBlockZ();
-                int modX = equalX ? 0 : 1;
-                int modZ = equalX ? 1 : 0;
+                int modX = startLocation.getBlockX() == endLocation.getBlockX() ? 0 : 1;
+                int modZ = startLocation.getBlockZ() == endLocation.getBlockZ() ? 0 : 1;
 
                 Block space = startLocation.getBlock();
 
                 Block[][] portalBlocks = new Block[4][5];
-                portalBlocks[0][0] = space.getRelative(modX * 0, -1, modZ * 0);
-                portalBlocks[1][0] = space.getRelative(modX * 1, -1, modZ * 1);
-                portalBlocks[2][0] = space.getRelative(modX * 2, -1, modZ * 2);
-                portalBlocks[3][0] = space.getRelative(modX * 3, -1, modZ * 3);
+                for (int y = 0; y < 5; y++) {
+                    for (int x = 0; x < 4; x++) {
+                        portalBlocks[x][y] = space.getRelative(modX * x, y, modZ * x);
+                    }
+                }
 
-                portalBlocks[0][1] = space.getRelative(modX * 0, 0, modZ * 0);
-                portalBlocks[1][1] = space.getRelative(modX * 1, 0, modZ * 1);
-                portalBlocks[2][1] = space.getRelative(modX * 2, 0, modZ * 2);
-                portalBlocks[3][1] = space.getRelative(modX * 3, 0, modZ * 3);
+//                log("Target start location: " + startLocation);
+//                log("Result start location: " + portalBlocks[0][0].getLocation());
 
-                portalBlocks[0][2] = space.getRelative(modX * 0, 1, modZ * 0);
-                portalBlocks[1][2] = space.getRelative(modX * 1, 1, modZ * 1);
-                portalBlocks[2][2] = space.getRelative(modX * 2, 1, modZ * 2);
-                portalBlocks[3][2] = space.getRelative(modX * 3, 1, modZ * 3);
-
-                portalBlocks[0][3] = space.getRelative(modX * 0, 2, modZ * 0);
-                portalBlocks[1][3] = space.getRelative(modX * 1, 2, modZ * 1);
-                portalBlocks[2][3] = space.getRelative(modX * 2, 2, modZ * 2);
-                portalBlocks[3][3] = space.getRelative(modX * 3, 2, modZ * 3);
-
-                portalBlocks[0][4] = space.getRelative(modX * 0, 3, modZ * 0);
-                portalBlocks[1][4] = space.getRelative(modX * 1, 3, modZ * 1);
-                portalBlocks[2][4] = space.getRelative(modX * 2, 3, modZ * 2);
-                portalBlocks[3][4] = space.getRelative(modX * 3, 3, modZ * 3);
+//                log("Target end location: " + endLocation);
+//                log("Result end location: " + portalBlocks[3][4].getLocation());
 
                 Portal portal = new Portal(portalWorldString, targetWorldString, portalBlocks);
-
                 if (isPortalValid(portal)) {
                     ArrayList<Portal> portals = worldPortals.get(portalWorldString);
                     portals.add(portal);
                     worldPortals.put(portalWorldString, portals);
                     portal.ignitePortal();
+
+                    log("Portal remains valid: " + portal.toString());
                 } else {
-//                    System.out.println("Portal no longer valid: " + portal.toString());
+                    log("Portal no longer valid: " + portal.toString());
                 }
             }
         } catch (IOException e) {
@@ -174,7 +163,6 @@ public final class CustomPortals extends JavaPlugin implements Listener {
     @EventHandler
     public void onPlayerTeleport(PlayerTeleportEvent event) {
         if (!event.getCause().equals(TeleportCause.NETHER_PORTAL)) return;
-        if (!PORTALS_OVERRIDE_NETHER && event.getTo().getWorld().getEnvironment() == Environment.NETHER) return;
         event.setCancelled(true);
 
         Player player = event.getPlayer();
@@ -214,13 +202,13 @@ public final class CustomPortals extends JavaPlugin implements Listener {
     }
 
     private Portal createPortal(Location targetLocation, String sourceWorldName) {
-//        System.out.println("Attempting to create a portal in " + targetLocation.getWorld().getName() + ", target location: " + targetLocation);
+        log("Attempting to create a portal in " + targetLocation.getWorld().getName() + ", target location: " + targetLocation);
 
         World targetWorld = targetLocation.getWorld();
         World sourceWorld = Bukkit.getWorld(sourceWorldName);
 
         MaterialData materialData = getPortalMaterial(sourceWorldName);
-//        System.out.println("Portal should be constructed from " + materialData + " to return to world " + sourceWorldName);
+        log("Portal should be constructed from " + materialData + " to return to world " + sourceWorldName);
 
         int targetX = targetLocation.getBlockX();
         int targetZ = targetLocation.getBlockZ();
@@ -229,10 +217,10 @@ public final class CustomPortals extends JavaPlugin implements Listener {
         int yAxis = 4;
         int zAxis = 3;
 
-//        System.out.println(targetWorld.getHighestBlockAt(targetLocation).getType());
+        log(targetWorld.getHighestBlockAt(targetLocation).getType());
         boolean worldHasRoof = targetWorld.getHighestBlockAt(targetLocation).getType() == Material.BEDROCK;
         if (worldHasRoof) {
-//            System.out.println("The world has a roof, finding block manually");
+//            log("The world has a roof, finding block manually");
 
             // Find the space manually
             int targetMaxHeight = targetWorld.getEnvironment() == Environment.NETHER ? 127 : targetWorld.getMaxHeight() - 1;
@@ -247,7 +235,7 @@ public final class CustomPortals extends JavaPlugin implements Listener {
                 }
             }
             if (!found || portalBase == null) {
-//                System.out.println("Not found :(");
+                log("No space found to create portal (manual method) :(");
                 return null;
             }
 
@@ -296,16 +284,16 @@ public final class CustomPortals extends JavaPlugin implements Listener {
             }
 
             Portal targetPortal = new Portal(targetWorld.getName(), sourceWorld.getName(), portalBlocks);
-//            System.out.println("Created portal in " + targetWorld.getName());
+            log("Created portal in " + targetWorld.getName());
             ArrayList<Portal> portals = worldPortals.get(targetWorld.getName());
             portals.add(targetPortal);
             worldPortals.put(targetWorld.getName(), portals);
-//            System.out.println(worldPortals.get(targetWorld.getName()));
+            log(worldPortals.get(targetWorld.getName()));
 
             targetPortal.ignitePortal();
             return targetPortal;
         } else {
-//            System.out.println("Finding location via Bukkit");
+//            log("Finding location via Bukkit");
 
             // Ask Bukkit
             Block highestBlock = targetWorld.getHighestBlockAt(targetLocation);
@@ -391,11 +379,11 @@ public final class CustomPortals extends JavaPlugin implements Listener {
             }
 
             Portal targetPortal = new Portal(targetWorld.getName(), sourceWorld.getName(), portalBlocks);
-//            System.out.println("Created portal in " + targetWorld.getName());
+            log("Created portal in " + targetWorld.getName());
             ArrayList<Portal> portals = worldPortals.get(targetWorld.getName());
             portals.add(targetPortal);
             worldPortals.put(targetWorld.getName(), portals);
-//            System.out.println(worldPortals.get(targetWorld.getName()));
+            log(worldPortals.get(targetWorld.getName()));
 
             targetPortal.ignitePortal();
             return targetPortal;
@@ -519,6 +507,9 @@ public final class CustomPortals extends JavaPlugin implements Listener {
             portalBlocks[2][4] = portalBlocks[2][3].getRelative(BlockFace.UP);
             portalBlocks[3][4] = portalBlocks[3][3].getRelative(BlockFace.UP);
 
+//            log(portalBlocks[0][0].getLocation());
+//            log(portalBlocks[3][4].getLocation());
+
             Block[] outerPortalBlocks = new Block[]{
                     portalBlocks[1][0], // Bottom middle
                     portalBlocks[2][0],
@@ -534,7 +525,7 @@ public final class CustomPortals extends JavaPlugin implements Listener {
 
             boolean isPortal = areValidBlocks(outerPortalBlocks, material);
             if (isPortal) {
-//                player.sendMessage("Is a portal!");
+                player.sendMessage(targetWorld + " portal created!");
 
                 // Create the portal object!
                 Portal portal = new Portal(player.getWorld().getName(), targetWorld, portalBlocks);
@@ -544,10 +535,9 @@ public final class CustomPortals extends JavaPlugin implements Listener {
 
                 portal.ignitePortal();
 
-//                System.out.println("Portal: " + portal);
-
+                log("Portal created: " + portal);
             } else {
-//                player.sendMessage("Not a portal :(");
+//                player.sendMessage("An error occured when ");
                 return;
             }
 
@@ -576,15 +566,23 @@ public final class CustomPortals extends JavaPlugin implements Listener {
         World world = location.getWorld();
 
         ArrayList<Portal> portals = worldPortals.get(world.getName());
-//        System.out.println("Searching for portals in world " + world.getName());
-//        System.out.println(portals);
+        log("Searching for portals in " + world.getName());
+//        log(portals);
+        double minDistance = 0;
+        Portal closestPortal = null;
         for (Portal portal : portals) {
-            if (destinationWorld != null && !portal.getTargetWorld().equals(destinationWorld)) continue;
+            if (destinationWorld != null && !portal.getPortalWorld().equals(destinationWorld)) continue;
             double distance = portal.getDistance(location);
-            if (distance > 0) return portal;
+            if (distance < 0 || (minDistance != 0 || distance > minDistance)) continue;
+            closestPortal = portal;
+            minDistance = distance;
         }
-//        System.out.println("No portal found");
-        return null;
+//        log("No portal found");
+        return closestPortal;
+    }
+
+    public static void log(Object message) {
+        if (DEBUG_MODE) System.out.println("[CustomPortals] " + message);
     }
 
     private boolean isPortalValid(Portal portal) {

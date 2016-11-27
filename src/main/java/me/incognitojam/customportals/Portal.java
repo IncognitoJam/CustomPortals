@@ -6,6 +6,8 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
+import static me.incognitojam.customportals.CustomPortals.log;
+
 public class Portal {
 
     public static int PORTAL_MAX_DISTANCE = 64;
@@ -26,11 +28,10 @@ public class Portal {
         this.portalWorld = portalWorld;
         this.targetWorld = targetWorld;
         this.startLocation = portalBlocks[0][0].getLocation();
-//        System.out.println(portalBlocks[3][4]);
         this.endLocation = portalBlocks[3][4].getLocation();
         this.portalBlocks = portalBlocks;
 
-        centerLocation = startLocation.add(endLocation.subtract(startLocation).multiply(0.5d));
+        centerLocation = startLocation.clone().add(endLocation.clone().subtract(startLocation).multiply(0.5d));
     }
 
     public void ignitePortal() {
@@ -44,7 +45,6 @@ public class Portal {
         };
 
         boolean northSouth = portalBlocks[0][0].getX() == portalBlocks[0][1].getX();
-//        System.out.println((byte) (northSouth ? 1 : 0));
 
         // Create 'portal' within portal
         for (Block teleportBlock : innerPortalBlocks) {
@@ -54,8 +54,8 @@ public class Portal {
     }
 
     public void teleportPlayer(Player player) {
-//        System.out.println("Teleporting " + player.getName() + " to " + portalBlocks[1][2].getLocation());
-        player.teleport(portalBlocks[1][2].getLocation(), TeleportCause.PLUGIN);
+        log("Teleporting " + player.getName() + " to " + getPortalWorld());
+        player.teleport(portalBlocks[1][1].getLocation().clone().add(0, 0.1, 0), TeleportCause.PLUGIN);
     }
 
     public String getPortalWorld() {
