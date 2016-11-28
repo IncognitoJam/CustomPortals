@@ -77,7 +77,8 @@ destinationCoords = universeCoords * destinationWorldScale;
 * There are currently some issues with the creation of portals, including:
     * Portals spawning on trees (low priority)
     * Portals spawning above the world roof in the nether (medium priority)
-    * Portals not being detected and more being created (high priority)
+    * ~~Portals not being detected and more being created (high priority)~~ Fixed in version `1.0.2`
+    * Portals do not create platforms when they spawn in unsafe locations (low priority)
 
 Please [contact me](mail_to:cameron.jamco@gmail.com) if you identify any bugs or make a issue thread here on GitHub.
 
