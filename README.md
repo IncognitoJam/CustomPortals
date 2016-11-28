@@ -89,7 +89,7 @@ Please [contact me](mail_to:cameron.jamco@gmail.com) if you identify any bugs or
 * Toggleable y-axis inclusion in 'distances' - different portals for different y-coordinates.
 
 ## Releases
-Releases can be found [here on GitHub](https://github.com/IncognitoJam/CustomPortals/tree/master/releases). See commits for change logs (until I decide to be more professional!)
+Releases can be found [here on GitHub](https://github.com/IncognitoJam/CustomPortals/releases).
 
 #####Latest Version: `1.0.2`
 
